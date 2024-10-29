@@ -1,6 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
 const JSONBigInt = require("json-bigint");
-const { get } = require("../routes");
 
 const prisma = new PrismaClient();
 

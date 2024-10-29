@@ -1,7 +1,7 @@
 const { z } = require("zod");
 const { BadRequestError } = require("../utils/request");
 
-exports.validateGerCars = (req, res, next) => {
+exports.validateGetCars = (req, res, next) => {
   // Validate the query
   const validateQuery = z.object({
     plate: z.string().optional().nullable(),
@@ -28,7 +28,7 @@ exports.validateGerCars = (req, res, next) => {
   next();
 };
 
-exports.validateGerCarById = (req, res, next) => {
+exports.validateGetCarById = (req, res, next) => {
   // Make a valiadtion schema 
   const validateParams = z.object({
     id: z.string(),
@@ -134,6 +134,19 @@ exports.validateUpdateCar = (req, res, next) => {
     specs: z.array(z.string()).nonempty(),
   });
 
+  // Parse and sanitize data
+  if (typeof req.body.available === "string") {
+    req.body.available = req.body.available === "true"; // Convert string to boolean
+  }
+
+  if (req.body.options) {
+    req.body.options = Array.isArray(req.body.options) ? req.body.options : [req.body.options];
+  }
+
+  if (req.body.specs) {
+    req.body.specs = Array.isArray(req.body.specs) ? req.body.specs : [req.body.specs];
+  }
+
   // The file is not required
   const validateFileBody = z.object({
     image: z.object({
@@ -151,19 +164,6 @@ exports.validateUpdateCar = (req, res, next) => {
   if (!result.success) {
     // If validation fails, return error messages
     throw new BadRequestError(result.error.errors);
-  }
-
-  // Parse and sanitize data
-  if (req.body.available) {
-    req.body.available = req.body.available === "true";
-  }
-
-  if (req.body.options) {
-    req.body.options = Array.isArray(req.body.options) ? req.body.options : [req.body.options];
-  }
-
-  if (req.body.specs) {
-    req.body.specs = Array.isArray(req.body.specs) ? req.body.specs : [req.body.specs];
   }
 
   // Validate 

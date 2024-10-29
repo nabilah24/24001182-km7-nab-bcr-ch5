@@ -1,8 +1,8 @@
 const express = require("express");
 const { authorization } = require("../middlewares/auth");
 const {
-  validateGerCars,
-  validateGerCarById,
+  validateGetCars,
+  validateGetCarById,
   validateCreateCar,
   validateUpdateCar,
   validateDeleteCarById,
@@ -21,12 +21,12 @@ const router = express.Router();
 // It will be run the URL based on path and the method
 router
   .route("/")
-  .get(authorization(adminRole, userRole), validateGerCars, getCars)
+  .get(authorization(adminRole, userRole), validateGetCars, getCars)
   .post(authorization(adminRole), validateCreateCar, createCar);
 
 router 
   .route("/:id")
-  .get(authorization(adminRole, userRole), validateGerCarById, getCarById)
+  .get(authorization(adminRole, userRole), validateGetCarById, getCarById)
   .put(authorization(adminRole), validateUpdateCar, updateCar)
   .delete(authorization(adminRole), validateDeleteCarById, deleteCarById);
 
