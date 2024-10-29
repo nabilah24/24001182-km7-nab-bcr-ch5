@@ -1,4 +1,5 @@
 const express = require("express");
+const { authorization } = require("../middlewares/auth");
 const {
   validateGetTransmissions,
   validateGetTransmissionById,
@@ -13,19 +14,20 @@ const {
   createTransmission,
   updateTransmission,
 } = require("../controllers/transmissions");
+const { adminRole, userRole } = require("../constants/auth");
 
 const router = express.Router();
 
 // It will be run the URL based on path and the method
 router
   .route("/")
-  .get(validateGetTransmissions, getTransmissions)
-  .post(validateCreateTransmission, createTransmission);
+  .get(authorization(adminRole, userRole), validateGetTransmissions, getTransmissions)
+  .post(authorization(adminRole), validateCreateTransmission, createTransmission);
 
 router 
   .route("/:id")
-  .get(validateGetTransmissionById, getTransmissionById)
-  .put(validateUpdateTransmission, updateTransmission)
-  .delete(validateDeleteTransmissionById, deleteTransmissionById);
+  .get(authorization(adminRole, userRole), validateGetTransmissionById, getTransmissionById)
+  .put(authorization(adminRole), validateUpdateTransmission, updateTransmission)
+  .delete(authorization(adminRole), validateDeleteTransmissionById, deleteTransmissionById);
 
 module.exports = router;

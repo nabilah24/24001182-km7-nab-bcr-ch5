@@ -1,4 +1,5 @@
 const express = require("express");
+const { authorization } = require("../middlewares/auth");
 const {
   validateGetManufactures,
   validateGetManufactureById,
@@ -13,19 +14,20 @@ const {
   createManufacture,
   updateManufacture,
 } = require("../controllers/manufactures");
+const { adminRole, userRole } = require("../constants/auth");
 
 const router = express.Router();
 
 // It will be run the URL based on path and the method
 router
   .route("/")
-  .get(validateGetManufactures, getManufactures)
-  .post(validateCreateManufacture, createManufacture);
+  .get(authorization(adminRole, userRole), validateGetManufactures, getManufactures)
+  .post(authorization(adminRole), validateCreateManufacture, createManufacture);
 
 router 
   .route("/:id")
-  .get(validateGetManufactureById, getManufactureById)
-  .put(validateUpdateManufacture, updateManufacture)
-  .delete(validateDeleteManufactureById, deleteManufactureById);
+  .get(authorization(adminRole, userRole), validateGetManufactureById, getManufactureById)
+  .put(authorization(adminRole), validateUpdateManufacture, updateManufacture)
+  .delete(authorization(adminRole), validateDeleteManufactureById, deleteManufactureById);
 
 module.exports = router;
